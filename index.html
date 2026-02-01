@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<!--
+  [ANGEL NOTE — File Overview]
+  This is a single-file web page (HTML + CSS + JavaScript) all in one.
+
+  - HTML = the structure + content (headings, sections, links)
+  - CSS  = the styling + layout (colors, spacing, fonts, positioning)
+  - JS   = behavior (the nav highlight timing, dynamic effects)
+
+  When you double-click this file, your browser renders it locally.
+-->
+
+<html lang="en">
+<!--
+  [ANGEL NOTE — <html lang="en">]
+  - <html> is the root “container tag” for the entire page.
+  - lang="en" helps accessibility tools and search engines understand language.
+-->
+
+<head>
+  <!--
+    [ANGEL NOTE — The <head>]
+    The head holds metadata + settings (not usually visible on the page),
+    plus CSS and scripts you want loaded early.
+  -->
+
+  <meta charset="UTF-8" />
+  <!--
+    [ANGEL NOTE — charset]
+    UTF-8 supports almost all characters (accents, emojis, symbols).
+  -->
+
+  <title>Protaizoa </title>
+  <!--
+    [ANGEL NOTE — <title>]
+    Shows in the browser tab + bookmarks. Not the on-page headline.
+  -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+    [ANGEL NOTE — viewport]
+    Key for mobile. Without it, phones render your page zoomed-out.
+  -->
+
+  <style>
+    /*
+      [ANGEL NOTE — CSS in a <style> block]
+      This is "internal CSS": styles live inside the HTML file.
+      Other options:
+      - External CSS file: <link rel="stylesheet" href="styles.css">
+      - Inline CSS: style="..." directly on an element (less ideal for big pages)
+
+      Core idea:
+      CSS uses "selectors" + "rules":
+        selector { property: value; property: value; }
+      Example:
+        body { margin: 0; }
+    */
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: linear-gradient(180deg, #0f1c24, #020608);
+      color: #edf6fa;
+    }
+    /*
+      [ANGEL NOTE — body]
+      body is the main canvas for the whole page.
+      - margin: 0 removes the browser’s default outer spacing
+      - font-family sets the default font stack
+      - background sets a vertical gradient (180deg)
+      - color sets default text color
+    */
+
+    header {
+      padding: 40px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    /*
+      [ANGEL NOTE — header]
+      - padding creates inner spacing
+      - text-align centers inline text (like the title + tagline)
+      - position: relative creates a positioning context for absolutely positioned children
+      - overflow: hidden clips anything that drifts outside the header (your critters/runner)
+    */
+
+    h1 {
+      font-size: 3.2em;
+      letter-spacing: 4px;
+      margin: 0;
+    }
+    /*
+      [ANGEL NOTE — h1]
+      h1 is the primary heading.
+      - em is a relative unit (scales with font-size)
+      - margin: 0 removes default spacing
+    */
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    /*
+      [ANGEL NOTE — nav layout (Flexbox)]
+      display: flex turns children (<a> links) into a row layout system.
+      - justify-content: center centers them horizontally
+      - gap: space between items
+      - flex-wrap: wrap allows items to wrap on smaller screens
+    */
+
+    nav a {
+      text-decoration: none;
+      color: #9cc6d8;
+      font-size: 1.1em;
+      position: relative;
+      padding: 6px 10px;           /* so highlight has some room */
+      border-radius: 999px;        /* pill highlight */
+      transition: transform 220ms ease, color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+    }
+    /*
+      [ANGEL NOTE — nav links]
+      <a> is an anchor tag (link).
+      - text-decoration: none removes underline
+      - border-radius: 999px creates "pill" corners
+      - transition makes hover/highlight effects feel smooth
+    */
+
+    nav a:hover {
+      color: #ffffff;
+    }
+    /*
+      [ANGEL NOTE — :hover]
+      A "pseudo-class" that applies when the mouse is over the link.
+    */
+
+    /* === NEW: highlight class that JS toggles as the flagellate passes === */
+    nav a.flag-hit {
+      color: #ffffff;
+      background: rgba(156, 198, 216, 0.14);
+      box-shadow: 0 0 22px rgba(156, 198, 216, 0.25);
+      transform: translateY(-1px);
+    }
+    /*
+      [ANGEL NOTE — .flag-hit]
+      This class is NOT always present.
+      JavaScript adds/removes it to create the “passing glow” effect.
+    */
+
+    main {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+    /*
+      [ANGEL NOTE — main]
+      main holds the page's primary content (sections).
+      - max-width limits line length (readability)
+      - margin: 60px auto centers horizontally (auto left/right)
+      - padding keeps content from touching the edges on small screens
+    */
+
+    section {
+      margin-bottom: 80px;
+    }
+
+    .quiet {
+      color: #b7d3df;
+      font-style: italic;
+    }
+    /*
+      [ANGEL NOTE — class selectors]
+      ".quiet" means: any element with class="quiet".
+      Classes are reusable style labels.
+    */
+
+    .widget {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    }
+
+    .faq h3 {
+      margin-bottom: 5px;
+      color: #cce8f3;
+    }
+
+    .faq p {
+      margin-top: 0;
+      color: #b9d3de;
+    }
+    /*
+      [ANGEL NOTE — descendant selectors]
+      ".faq h3" means: any <h3> inside an element with class="faq".
+      This lets you style headings *only* in the FAQ area.
+    */
+
+    footer {
+      text-align: center;
+      padding: 40px;
+      font-size: 0.9em;
+      color: #6e8b98;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Magic Dust */
+    .angel-dust {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .angel-dust::after {
+      content: "✨";
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      animation: float 3s ease-in-out infinite;
+      opacity: 0.6;
+    }
+    /*
+      [ANGEL NOTE — ::after]
+      A pseudo-element: it creates a “virtual element” after the element’s content.
+      Here, you’re injecting a sparkle without adding extra HTML.
+    */
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    /*
+      [ANGEL NOTE — keyframes]
+      Animations are defined as named sequences (float) and then applied via:
+      animation: float 3s ...;
+    */
+
+    /* ===== Header Images (Headshot + Logo) ===== */
+    .header-images {
+      position: absolute;
+      inset: 0;
+      pointer-events: none; /* keeps header clickable */
+      z-index: 2;
+    }
+    /*
+      [ANGEL NOTE — layering + z-index]
+      - position: absolute takes it out of normal flow and positions it inside header
+      - inset: 0 is shorthand for top/right/bottom/left = 0
+      - z-index controls stacking order (higher = more “on top”)
+    */
+
+    .headshot {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 0 30px rgba(0,0,0,0.35);
+      background: rgba(255,255,255,0.06);
+    }
+    /*
+      [ANGEL NOTE — object-fit]
+      object-fit: cover tells the image to fill the box without squishing,
+      cropping if needed.
+    */
+
+    .logo {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 0 30px rgba(0,0,0,0.35);
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* ===== NEW: Nav row wrapper so we can position the "flagellate" through it ===== */
+    .nav-wrap {
+      position: relative;
+      display: inline-block; /* shrink-wrap around nav */
+      margin-top: 20px;
+      z-index: 3; /* above background layers */
+    }
+    /*
+      [ANGEL NOTE — inline-block shrink-wrap]
+      inline-block sizes itself to its content, so the runner positioning
+      stays tied to the nav row rather than full width.
+    */
+
+    /* ===== NEW: The "flagellate" line that runs through the buttons ===== */
+    .flagellate-runner {
+      position: absolute;
+      left: -35vw;     /* start well off to the left */
+      right: -35vw;    /* allow full sweep */
+      top: 58%;        /* controls vertical alignment through the nav */
+      height: 2px;
+      pointer-events: none;
+      z-index: 1;      /* behind link text, but visible */
+      opacity: 0.75;
+      filter: blur(0.1px);
+    }
+    /*
+      [ANGEL NOTE — vw units]
+      vw = “viewport width” (1vw = 1% of your browser window width).
+      This makes the sweep responsive across screen sizes.
+    */
+
+    /* this is the actual moving "head" + trailing line */
+    .flagellate-runner::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 2px;
+      width: 35vw; /* visible part */
+      background: linear-gradient(
+        90deg,
+        rgba(230,240,244,0.00),
+        rgba(230,240,244,0.55),
+        rgba(156,198,216,0.95)
+      );
+      border-radius: 999px;
+      transform-origin: left center;
+      animation: sweep 6s linear infinite;
+      box-shadow: 0 0 18px rgba(156,198,216,0.22);
+    }
+
+    /* tiny wiggle, so it feels alive */
+    .flagellate-runner::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -10px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(156,198,216,0.18);
+      filter: blur(6px);
+      animation: sweep 6s linear infinite, drift 0.55s ease-in-out infinite alternate;
+    }
+
+    @keyframes sweep {
+      0%   { transform: translateX(0) rotate(0deg); opacity: 0; }
+      6%   { opacity: 1; }
+      94%  { opacity: 1; }
+      100% { transform: translateX(170vw) rotate(2deg); opacity: 0; }
+    }
+
+    @keyframes drift {
+      from { transform: translateY(0); }
+      to   { transform: translateY(3px); }
+    }
+
+    /* ===== Paramecium / Protozoa CSS Creature ===== */
+    .protozoa {
+      position: absolute;
+      top: 30px;
+      left: -140px; /* start offscreen */
+      width: 110px;
+      height: 50px;
+      background: rgba(156, 198, 216, 0.30);
+      border-radius: 60% 40% 55% 45%;
+      filter: blur(0.25px);
+      animation: crawl 22s linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    /*
+      [ANGEL NOTE — the “creature”]
+      This is a div styled to look organic.
+      It moves using CSS animation "crawl".
+    */
+
+    .protozoa::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      background: rgba(230, 240, 244, 0.22);
+      border-radius: 50%;
+    }
+
+    .flagella {
+      position: absolute;
+      right: -22px;
+      top: 50%;
+      width: 22px;
+      height: 2px;
+      background: rgba(230, 240, 244, 0.6);
+      transform-origin: left center;
+      animation: wiggle 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes crawl {
+      0%   { transform: translateX(0) rotate(0deg); opacity: 0; }
+      5%   { opacity: 0.6; }
+      95%  { opacity: 0.6; }
+      100% { transform: translateX(120vw) rotate(8deg); opacity: 0; }
+    }
+
+    @keyframes wiggle {
+      from { transform: rotate(10deg); }
+      to   { transform: rotate(-15deg); }
+    }
+
+    /* ===== Optional Embedded "GIF" / MOV (looping video) ===== */
+    .proto-video {
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+      opacity: 0.55;
+      border-radius: 18px;
+      overflow: hidden;
+      pointer-events: none;
+      mix-blend-mode: screen; /* gives a nice “microscope overlay” feel */
+      filter: contrast(1.05);
+      z-index: 1;
+    }
+    /*
+      [ANGEL NOTE — video overlay]
+      mix-blend-mode: screen makes the video blend with background like light.
+      This is a “visual trick” feature: can look great, can behave differently per browser.
+    */
+
+    .proto-video video,
+    .proto-video img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @media (max-width: 520px) {
+      header { padding: 24px; }
+      h1 { font-size: 2.4em; letter-spacing: 3px; }
+      .headshot { width: 70px; height: 70px; top: 16px; left: 16px; }
+      .logo { width: 56px; height: 56px; top: 18px; right: 18px; }
+      .proto-video { width: 90px; height: 90px; }
+      .flagellate-runner { top: 58%; } /* a touch lower on small screens */
+    }
+    /*
+      [ANGEL NOTE — @media]
+      Media queries apply different styles depending on screen size.
+      This is the backbone of “responsive design.”
+    */
+  </style>
+</head>
+
+<body>
+<!--
+  [ANGEL NOTE — <body>]
+  Everything visible on the page goes in <body>.
+-->
+
+<header>
+  <!--
+    [ANGEL NOTE — header region]
+    Header contains:
+    - moving protozoa
+    - optional video overlay
+    - headshot + logo overlay
+    - title + tagline
+    - navigation with runner + JS highlighting
+  -->
+
+  <!-- CSS Paramecium -->
+  <div class="protozoa">
+    <div class="flagella"></div>
+  </div>
+
+  <!-- Optional embedded “gif”: use MOV or GIF
+       Put the file in the SAME folder and name it paramecium.mov (or change src)
+  -->
+  <div class="proto-video">
+    <video autoplay loop muted playsinline>
+      <source src="paramecium.mov" type="video/mp4" />
+      <!-- If you use a GIF instead, comment the video block above and use this:
+      <img src="paramecium.gif" alt="Paramecium animation">
+      -->
+    </video>
+  </div>
+
+  <!-- Headshot + Logo -->
+  <div class="header-images">
+    <!-- Put headshot.jpeg in the same folder as this HTML -->
+    <img class="headshot" src="headshot.jpeg" alt="Headshot" />
+
+    <!-- Put logo.png in the same folder as this HTML (or remove this line if not ready) -->
+    <img class="logo" src="logo.png" alt="Logo" />
+  </div>
+
+  <h1>PROTAIZOA DATA</h1>
+  <p class="quiet">Understanding AI at the cellular level.</p>
+
+  <!-- NEW: wrap nav so we can run the flagellate THROUGH it -->
+  <div class="nav-wrap">
+    <!-- NEW: the moving “flagellate” line -->
+    <div class="flagellate-runner" aria-hidden="true"></div>
+    <!--
+      [ANGEL NOTE — aria-hidden]
+      aria-hidden="true" tells screen readers to ignore purely decorative elements,
+      improving accessibility.
+    -->
+
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Tech Aingels</a>
+      <a href="#">Labs</a>
+      <a href="#">AI Help</a>
+      <!--
+        [ANGEL NOTE — href="#"]
+        "#" is a placeholder link (doesn't go to another page).
+        Later you can replace with:
+          href="labs.html"
+        or section anchors:
+          href="#labs"
+      -->
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section>
+    <p>
+      What is Artificial Intelligence?<br />
+      <!--
+        [ANGEL NOTE — <br />]
+        Line break. Useful sparingly.
+        Usually better to use separate <p> elements or CSS margin for spacing.
+      -->
+    </p>
+  </section>
+
+  <section class="widget angel-dust">
+    <h2>AI Help (for Humans)</h2>
+    <p class="quiet">
+      This is a simple place to start. No jargon. No pressure.
+    </p>
+
+    <div class="faq">
+      <h3>What is AI?</h3>
+      <p>
+        AI is software that learns patterns from information and uses them to assist,
+        predict, or create. Think of it as a tool—not a mind.
+      </p>
+
+      <h3>What can AI do for me?</h3>
+      <p>
+        AI can help you write, learn, organize ideas, answer questions,
+        and explore possibilities faster than doing it alone.
+      </p>
+
+      <h3>Does it cost anything?</h3>
+      <p>
+        This basic AI help is free. Some advanced tools may cost money later,
+        but learning always starts without a paywall.
+      </p>
+
+      <h3>Is this safe?</h3>
+      <p>
+        Yes. We design AI to assist—not judge, replace, or manipulate.
+        You stay in control.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tech Angels</h2>
+    <p>
+      Tech Angels are here to help translate complexity into clarity.
+      They guide, explain, and gently spread insight—never overwhelm.
+    </p>
+  </section>
+</main>
+
+<footer>
+  © Protaizoa — quietly working.
+</footer>
+
+<!--
+  [ANGEL NOTE — JavaScript vs Java]
+  This section below is JavaScript (JS), not Java.
+
+  - JavaScript: runs in the browser; controls behavior on webpages.
+  - Java: a different language commonly used for apps/servers; NOT used here.
+
+  Here, JS is used to:
+  - find the nav links
+  - periodically add/remove the CSS class "flag-hit"
+  - so the glowing highlight matches the sweep timing
+-->
+
+<!-- NEW: JS that highlights each nav button as the flagellate sweeps across -->
+<script>
+  (function () {
+    // [ANGEL NOTE — IIFE]
+    // This is an "Immediately Invoked Function Expression":
+    // It runs immediately and keeps variables out of the global scope.
+
+    const navLinks = Array.from(document.querySelectorAll("header nav a"));
+    // [ANGEL NOTE — querySelectorAll]
+    // Grabs all <a> links inside <header><nav>.
+    // Returns a NodeList; Array.from converts it to a true Array for easier use.
+
+    if (!navLinks.length) return;
+    // [ANGEL NOTE — guard clause]
+    // If there are no links, stop. Prevents errors.
+
+    // Keep this in sync with the CSS sweep animation duration (6s).
+    const durationMs = 6000;
+    // [ANGEL NOTE — sync]
+    // If you change CSS animation: sweep 8s... then set durationMs = 8000.
+
+    // Small cushion so the first highlight doesn’t appear before the line is visible.
+    const leadInMs = 350;
+
+    let timer = null;
+    // [ANGEL NOTE — timer handle]
+    // Stores the interval reference so we can clear it.
+
+    function clearAll() {
+      navLinks.forEach(a => a.classList.remove("flag-hit"));
+    }
+    // [ANGEL NOTE — classList]
+    // classList.add/remove toggles CSS classes without editing style directly.
+
+    function runCycle() {
+      clearAll();
+
+      const stepMs = Math.floor((durationMs - leadInMs) / navLinks.length);
+      // [ANGEL NOTE — stepMs]
+      // Divides the sweep duration into equal slices so each link gets highlighted.
+
+      let i = 0;
+
+      timer = setInterval(() => {
+        clearAll();
+        navLinks[i].classList.add("flag-hit");
+        i++;
+
+        if (i >= navLinks.length) {
+          clearInterval(timer);
+          timer = null;
+
+          // Clear highlight near the end, so it feels like the line leaves.
+          setTimeout(clearAll, Math.max(120, stepMs - 80));
+        }
+      }, stepMs);
+    }
+
+    // Start shortly after load, then repeat every duration.
+    setTimeout(() => {
+      runCycle();
+      setInterval(runCycle, durationMs);
+    }, leadInMs);
+    // [ANGEL NOTE — setTimeout vs setInterval]
+    // setTimeout: run once after a delay
+    // setInterval: run repeatedly every N milliseconds
+  })();
+</script>
+
+</body>
+</html>
